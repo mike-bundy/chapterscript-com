@@ -563,3 +563,96 @@ html.reveal-enabled .reveal.in {
 .story { max-width: 680px; }
 .story p { color: var(--dim); line-height: 1.8; margin-bottom: 1.1rem; }
 .story p strong, .story p code { color: var(--ink); }
+.story-grid {
+  display: grid;
+  grid-template-columns: 5fr 3fr;
+  gap: 3.5rem;
+  align-items: start;
+}
+.story-quote {
+  margin: 2.2rem 0;
+  padding-left: 1.4rem;
+  border-left: 3px solid var(--mint);
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.story-quote em { font-style: normal; color: var(--mint); }
+
+/* The production slate card */
+.slate {
+  position: sticky;
+  top: 5.5rem;
+  background: linear-gradient(160deg, var(--panel-2), var(--panel));
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+}
+.slate-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: rgba(11, 14, 20, 0.5);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.slate-rec {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--mint);
+  box-shadow: 0 0 8px var(--mint);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .slate-rec { animation: rec-pulse 2s ease-in-out infinite; }
+  @keyframes rec-pulse { 50% { opacity: 0.35; box-shadow: 0 0 2px var(--mint); } }
+}
+.slate-title {
+  padding: 1.5rem 1.25rem 1.1rem;
+  font-size: 2.1rem;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  background: linear-gradient(120deg, var(--ink) 55%, var(--mint));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.slate-facts { padding: 0 1.25rem 1.1rem; }
+.slate-facts > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+.slate-facts dt {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+  padding-top: 0.15rem;
+}
+.slate-facts dd { color: var(--dim); text-align: right; }
+.slate-facts .slate-none { color: var(--mint); font-family: var(--font-mono); }
+.slate-foot {
+  padding: 0.8rem 1.25rem;
+  border-top: 1px solid var(--border);
+  background: rgba(11, 14, 20, 0.5);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--faint);
+}
+.slate-foot code { color: var(--mint); }
+@media (max-width: 860px) {
+  .story-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .slate { position: static; max-width: 420px; }
+}
