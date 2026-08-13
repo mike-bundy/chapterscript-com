@@ -656,3 +656,21 @@ html.reveal-enabled .reveal.in {
   .story-grid { grid-template-columns: 1fr; gap: 2.5rem; }
   .slate { position: static; max-width: 420px; }
 }
+
+/* ---------- Stability note ---------- */
+.stability { max-width: 680px; }
+.stability p { color: var(--dim); line-height: 1.8; margin-bottom: 1.1rem; }
+.stability-arc {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--faint);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.8rem 1.2rem;
+  display: inline-block;
+  margin-bottom: 1.6rem;
+  white-space: nowrap;
+}
+.stability-arc .now { color: var(--ink); }
+.stability-arc .then { color: var(--mint); }
