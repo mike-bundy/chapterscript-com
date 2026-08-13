@@ -67,35 +67,41 @@
             <span class="code-title">chapter.json</span>
           </div>
 <pre>{
-  <span class="k">"formatVersion"</span>: <span class="n">2</span>,                    <span class="c">// migrated forward on open</span>
-  <span class="k">"experienceID"</span>: <span class="s">"the-lighthouse"</span>,
+  <span class="k">"formatVersion"</span>: <span class="n">3</span>,                    <span class="c">// migrated forward on open</span>
+  <span class="k">"id"</span>: <span class="s">"the-lighthouse"</span>,
   <span class="k">"displayName"</span>: <span class="s">"The Lighthouse"</span>,
-  <span class="k">"defaultSegmentId"</span>: <span class="s">"arrival"</span>,         <span class="c">// where playback begins</span>
-  <span class="k">"segments"</span>: [
+  <span class="k">"defaultSequenceId"</span>: <span class="s">"arrival"</span>,        <span class="c">// where playback begins</span>
+  <span class="k">"sequences"</span>: [
     {
       <span class="k">"id"</span>: <span class="s">"arrival"</span>,
       <span class="k">"presentation"</span>: <span class="s">"immersive"</span>,       <span class="c">// full surround</span>
       <span class="k">"immersiveBackdrop"</span>: {
-        <span class="k">"video"</span>: <span class="s">"shore_360.mov"</span>,        <span class="c">// from assets/, by manifest</span>
-        <span class="k">"field"</span>: <span class="s">"deg360"</span>
+        <span class="k">"kind"</span>: <span class="s">"video"</span>,
+        <span class="k">"file"</span>: <span class="s">"shore_360.mov"</span>,          <span class="c">// from assets/, by manifest</span>
+        <span class="k">"field"</span>: <span class="s">"equirect360"</span>,
+        <span class="k">"loop"</span>: <span class="n">true</span>
       },
       <span class="k">"steps"</span>: [
         {
           <span class="k">"duration"</span>: <span class="n">8</span>,                  <span class="c">// seconds, then advance…</span>
           <span class="k">"gate"</span>: { <span class="k">"type"</span>: <span class="s">"tap"</span> },      <span class="c">// …but hold for a tap first</span>
           <span class="k">"actions"</span>: [
-            { <span class="k">"revealEntity"</span>: { <span class="k">"name"</span>: <span class="s">"lantern"</span>, <span class="k">"fadeIn"</span>: <span class="n">1.5</span> } }
+            { <span class="k">"kind"</span>: <span class="s">"revealEntity"</span>,
+              <span class="k">"reveal"</span>: { <span class="k">"entity"</span>: <span class="s">"lantern"</span>, <span class="k">"fadeIn"</span>: <span class="n">1.5</span> } }
           ]
         }
       ],
       <span class="k">"animationTracks"</span>: [
         {
-          <span class="k">"target"</span>: <span class="s">"lantern"</span>,
-          <span class="k">"keyPath"</span>: <span class="s">"position.y"</span>,
-          <span class="k">"keys"</span>: [                       <span class="c">// bézier-eased keyframes</span>
-            { <span class="k">"time"</span>: <span class="n">0</span>, <span class="k">"value"</span>: <span class="n">0.0</span>, <span class="k">"outTangent"</span>: [<span class="n">0.3</span>, <span class="n">0.0</span>] },
-            { <span class="k">"time"</span>: <span class="n">4</span>, <span class="k">"value"</span>: <span class="n">1.2</span>, <span class="k">"inTangent"</span>: [<span class="n">0.7</span>, <span class="n">1.0</span>] }
-          ]
+          <span class="k">"entity"</span>: <span class="s">"lantern"</span>,             <span class="c">// bézier-eased keyframes,</span>
+          <span class="k">"rotateOrder"</span>: <span class="s">"xyz"</span>,            <span class="c">// continuous Euler degrees</span>
+          <span class="k">"channels"</span>: {
+            <span class="k">"ty"</span>: [
+              { <span class="k">"t"</span>: <span class="n">0.0</span>, <span class="k">"v"</span>: <span class="n">0.0</span>, <span class="k">"interp"</span>: <span class="s">"bezier"</span>,
+                <span class="k">"outTangent"</span>: { <span class="k">"dt"</span>: <span class="n">0.4</span>, <span class="k">"dv"</span>: <span class="n">0.0</span> } },
+              { <span class="k">"t"</span>: <span class="n">4.0</span>, <span class="k">"v"</span>: <span class="n">1.2</span>, <span class="k">"interp"</span>: <span class="s">"bezier"</span> }
+            ]
+          }
         }
       ]
     }
@@ -117,7 +123,7 @@
             <p>The whole document. One <code>chapter.json</code>, one story, one bundle.</p>
           </div>
           <div class="concept reveal">
-            <h3>segments</h3>
+            <h3>sequences</h3>
             <p>Timed scenes. Each has a presentation mode and an optional backdrop.</p>
           </div>
           <div class="concept reveal">
@@ -194,7 +200,7 @@
         <div class="spec-links">
           <a class="spec-link reveal" href="https://maestrostud.io/docs/chapterscript-format.html">
             <h3>Format reference <span>→</span></h3>
-            <p>The <code>chapter.json</code> schema: segments, steps, gates, actions, tracks and the asset manifest.</p>
+            <p>The <code>chapter.json</code> schema: sequences, steps, gates, actions, tracks and the asset manifest.</p>
           </a>
           <a class="spec-link reveal" href="https://maestrostud.io/docs/live-sync.html">
             <h3>Live sync protocol <span>→</span></h3>
