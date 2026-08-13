@@ -45,7 +45,7 @@ mint (`<span class="accent">`). There is no logo image.
 - NEVER use these strings anywhere: "Chapter Vision", "Chapter Studio",
   "Vision Studio", "SharedVisions", "Afterburn", "MaestroKit", "chapterengine".
 - Do not invent APIs, license names, version numbers, or benchmark claims.
-- GitHub links point at https://github.com/implement-studio/chapterscript and
+- GitHub links point at https://github.com/mike-bundy/chapterscript and
   .../chapterplayer; the repos are not public yet. Each link carries an HTML
   comment: `placeholder repo URL: update when the org/repos go live`.
 
