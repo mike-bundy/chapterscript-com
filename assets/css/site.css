@@ -558,3 +558,8 @@ html.reveal-enabled .reveal.in {
 @media (max-width: 720px) { .doc-next { grid-template-columns: 1fr; } }
 .docpage .spec-link h3 { margin: 0 0 .4rem; padding: 0; border: none; }
 .docpage .spec-link p { margin: 0; }
+
+/* ---------- Origin story ---------- */
+.story { max-width: 680px; }
+.story p { color: var(--dim); line-height: 1.8; margin-bottom: 1.1rem; }
+.story p strong, .story p code { color: var(--ink); }

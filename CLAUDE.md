@@ -44,7 +44,12 @@ mint (`<span class="accent">`). There is no logo image.
   alone as the open source home, with the footer "An Implement project"
   linking implement.studio.
 - NEVER use these strings anywhere: "Chapter Vision", "Chapter Studio",
-  "Vision Studio", "SharedVisions", "Afterburn", "MaestroKit", "chapterengine".
+  "Vision Studio", "SharedVisions" (one word), "Afterburn", "MaestroKit",
+  "chapterengine".
+- **"Shared Visions" (two words, title case) is PUBLIC**: it is the immersive
+  documentary named in the #story origin section (announced 2026-08-12 by
+  request). The two-word documentary title is fine; the one-word internal
+  codename above is not.
 - Do not invent APIs, license names, version numbers, or benchmark claims.
 - GitHub links point at https://github.com/mike-bundy/ChapterScript and
   .../ChapterPlayer (live repos, exact casing).
