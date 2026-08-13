@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Embedding guide — ChapterPlayer</title>
+  <meta name="description" content="How to embed ChapterPlayer, the open source visionOS runtime for ChapterScript: architecture, content loading, live development, and requirements.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/site.css">
+</head>
+<body>
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="wordmark" href="/">chapterscript<span class="accent">.com</span></a>
+      <nav class="nav-links" aria-label="Site">
+        <a href="/format.html">Format</a>
+        <a href="/player.html" aria-current="page">Player</a>
+        <a href="https://github.com/mike-bundy/ChapterPlayer">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="docpage">
+    <div class="wrap">
+      <a class="doc-back" href="/">← chapterscript.com</a>
+      <h1>Embedding ChapterPlayer</h1>
+      <p class="doc-lede">
+        ChapterPlayer is a Swift package that runs ChapterScript documents on Apple
+        Vision Pro. It bundles the sequence engine, spatial audio and video managers,
+        entity factory, gate detection, and live-development client, so your app ships
+        its UI, its content, and its product-specific extensions, and nothing else.
+      </p>
+
+      <h2 id="install">Installing</h2>
+      <pre>// Package.swift
+.package(url: "https://github.com/mike-bundy/ChapterPlayer.git", branch: "main")</pre>
+      <p>
+        ChapterPlayer tracks the <a href="https://github.com/mike-bundy/ChapterScript">ChapterScript</a>
+        format package at <code>main</code> while the wire format is pre-1.0; both will
+        pin to tagged versions once the format settles. A local sibling checkout of
+        <code>ChapterScript</code> overrides the remote by package identity, the standard
+        local-override workflow.
+      </p>
+      <h3>Requirements</h3>
+      <ul>
+        <li>visionOS 26+</li>
+        <li>Swift 6.2 / Xcode 26+</li>
+        <li>ChapterScript, resolved automatically as a dependency</li>
+      </ul>
+
+      <h2 id="architecture">What's inside</h2>
+      <div class="table-scroll"><table>
+        <tr><th>Piece</th><th>What it does</th></tr>
+        <tr><td>SequenceEngine</td><td>The declarative sequence/step choreographer. Always resets entities on sequence change; pluggable executor protocols for entity, audio, video, attachment, and effect actions.</td></tr>
+        <tr><td>GateDetectionController</td><td>Holds a step until its gate resolves (tap, gaze, approach, grab, or timeout), behind the <code>GateDetecting</code> protocol.</td></tr>
+        <tr><td>SpatialAudioManager</td><td><code>AVAudioEngine</code>-based channel system with audio buses, ducking rules, audio zones, and loop configs.</td></tr>
+        <tr><td>VideoPlaybackManager</td><td>Per-channel <code>AVPlayer</code> orchestrator: flat scene panels, attachment-based SwiftUI overlays, and 360°/180° immersive skybox playback.</td></tr>
+        <tr><td>EntityFactory</td><td>Builds RealityKit entities from ChapterScript definitions: primitives, <strong>USDZ models</strong>, 3D text, lights, and video panels, with a registry for app-specific custom factories.</td></tr>
+        <tr><td>DocumentEntityLoader</td><td>Materializes a document's entities into the immersive scene and registers them with the executors.</td></tr>
+        <tr><td>BackdropCueDriver</td><td>Drives sequence backdrop presentation (video and image skyboxes, <strong>full USDZ backdrop scenes</strong>) behind <code>BackdropCuePresenting</code>.</td></tr>
+        <tr><td>MotionCurveEvaluator</td><td>A thin delegate over ChapterScript's canonical curve sampling, so playback matches editor previews and motion trails exactly.</td></tr>
+        <tr><td>PulseRingEntity / SparkBurstEntity</td><td>Procedural VFX primitives fired by the corresponding step actions.</td></tr>
+        <tr><td>AssetPreloader</td><td>Warms media before playback so first frames land on time.</td></tr>
+      </table></div>
+
+      <h2 id="content">Loading content</h2>
+      <p>Content arrives through an <code>ExperienceProvider</code> paired with a <code>MediaResolver</code>:</p>
+      <ul>
+        <li><strong>BundledExperienceProvider</strong> + <code>BundleMediaResolver</code>: chapters shipped inside your app bundle.</li>
+        <li><strong>LocalFolderExperienceProvider</strong> + <code>LocalFolderMediaResolver</code>: chapters from a folder on device.</li>
+        <li><strong>LiveDevExperienceProvider</strong> + <code>LiveMediaResolver</code>: live development against an authoring tool on your network. <code>LiveServerBrowser</code> discovers peers over Bonjour, a <code>LiveSubscription</code> streams document updates, and assets prefetch concurrently.</li>
+      </ul>
+
+      <h2 id="responsibilities">What your app provides</h2>
+      <ul>
+        <li>The visionOS scenes: <code>@main</code>, <code>WindowGroup</code>, <code>ImmersiveSpace</code>, with <code>openImmersiveSpace</code> / <code>dismissImmersiveSpace</code> injected into the player.</li>
+        <li>Custom action handlers, registered through the effect executor's custom-action escape hatch (the format's <code>custom</code> action kind).</li>
+        <li>Product-specific entity factories layered on the built-in registry: bespoke USDZs, audio-reactive elements, anything the declarative catalog doesn't cover.</li>
+        <li>A <code>MediaResolver</code> for your distribution model, or one of the built-ins above.</li>
+      </ul>
+
+      <div class="doc-callout"><p>
+        The runtime is deliberately tool-agnostic: any document that decodes as valid
+        ChapterScript plays, no matter what wrote it.
+      </p></div>
+
+      <div class="doc-next">
+        <a class="spec-link" href="/format.html">
+          <h3>The format reference <span>→</span></h3>
+          <p>The <code>chapter.json</code> schema: sequences, steps, gates, actions, tracks and the manifest.</p>
+        </a>
+        <a class="spec-link" href="https://github.com/mike-bundy/ChapterPlayer">
+          <h3>ChapterPlayer on GitHub <span>→</span></h3>
+          <p>The source, the README, and the issue tracker.</p>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <p>An <a href="https://implement.studio">Implement</a> project · © 2026 Implement</p>
+      <div class="footer-links">
+        <a href="https://github.com/mike-bundy/ChapterPlayer">GitHub</a>
+        <a href="mailto:hello@chapterscript.com">hello@chapterscript.com</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

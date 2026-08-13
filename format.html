@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Format reference — ChapterScript</title>
+  <meta name="description" content="The complete ChapterScript reference: the .chapterscript bundle, chapter.json top to bottom, sequences, steps, gates, the action catalog, animation tracks, the asset manifest, and versioning.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/site.css">
+</head>
+<body>
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="wordmark" href="/">chapterscript<span class="accent">.com</span></a>
+      <nav class="nav-links" aria-label="Site">
+        <a href="/format.html" aria-current="page">Format</a>
+        <a href="/player.html">Player</a>
+        <a href="https://github.com/mike-bundy/ChapterScript">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="docpage">
+    <div class="wrap">
+      <a class="doc-back" href="/">← chapterscript.com</a>
+      <h1>The format reference</h1>
+      <p class="doc-lede">
+        Everything a tool needs to read or write ChapterScript, in one page. The
+        normative source of truth is the
+        <a href="https://github.com/mike-bundy/ChapterScript">ChapterScript Swift package</a>:
+        its <code>Codable</code> types define the schema, and its test fixtures are
+        working documents.
+      </p>
+
+      <h2 id="bundle">The bundle</h2>
+      <p>A project is a <code>.chapterscript</code> directory bundle:</p>
+      <pre>MyStory.chapterscript/
+├── chapter.json      the entire document
+└── assets/           your media, byte for byte as imported
+    ├── intro.mp4
+    ├── ambience.m4a
+    └── lantern.usdz</pre>
+      <p>
+        <code>chapter.json</code> describes everything a player needs. Files under
+        <code>assets/</code> are referenced through the manifest by relative path; the
+        directory layout under <code>assets/</code> is up to the author. Copy the folder
+        and you have copied the project.
+      </p>
+
+      <h2 id="document">chapter.json, top to bottom</h2>
+      <p>The document (format version <strong>3</strong>) opens with identity, then the main collections:</p>
+      <div class="table-scroll"><table>
+        <tr><th>Key</th><th>What it is</th></tr>
+        <tr><td>formatVersion</td><td>Single integer schema version, currently <code>3</code>. Drives migration on open.</td></tr>
+        <tr><td>id</td><td>Stable experience identifier.</td></tr>
+        <tr><td>displayName</td><td>Human-readable title. An optional <code>description</code> may sit alongside it.</td></tr>
+        <tr><td>defaultSequenceId</td><td>The sequence to play first.</td></tr>
+        <tr><td>sequences</td><td>The timed scenes of the chapter (detailed below).</td></tr>
+        <tr><td>entities</td><td>Definitions for everything placeable: primitives, USDZ models, 3D text, lights, video panels, particle emitter bindings, plus a custom-factory escape hatch.</td></tr>
+        <tr><td>particlePresets</td><td>Reusable emitter recipes referenced by emitter entities.</td></tr>
+        <tr><td>manifest</td><td>One entry per asset file: relative path, byte size, SHA-256 hash, plus probed duration and dimensions for media.</td></tr>
+      </table></div>
+
+      <h2 id="sequences">Sequences</h2>
+      <p>A chapter contains sequences; players run one sequence at a time. Each sequence carries:</p>
+      <ul>
+        <li><strong>id</strong> and <strong>name</strong>. Authored ids are opaque and never rewritten by tooling.</li>
+        <li><strong>presentation</strong>: <code>immersive</code>, <code>mixed</code> (passthrough plus 3D), or <code>windowed</code>. Unknown values fall back to <code>immersive</code>, so newer documents degrade safely on older players.</li>
+        <li><strong>immersiveBackdrop</strong> (optional): an ambient backdrop bound at sequence start. See below.</li>
+        <li><strong>steps</strong>: the ordered timed beats.</li>
+        <li><strong>animationTracks</strong>: sequence-level keyframe animation. See below.</li>
+        <li><strong>onComplete</strong>: what happens after the last step, one of <code>holdOnLastStep</code>, <code>autoAdvance</code> (with <code>nextSequenceId</code>), <code>dismissToHome</code>, or <code>transitionTo</code>.</li>
+      </ul>
+
+      <h3>Backdrops</h3>
+      <p>The backdrop is a kind-tagged object:</p>
+      <pre>{ "kind": "video", "file": "shore_360.mov", "layout": "mono",
+  "field": "equirect360", "radius": 1000, "loop": true, "audioEnabled": false }
+
+{ "kind": "image", "file": "dusk.heic", "field": "equirect360", "radius": 1000 }
+
+{ "kind": "usdz", "assetId": "forest_scene" }</pre>
+      <ul>
+        <li><strong>layout</strong> is a stereo packing hint: <code>mono</code>, <code>sideBySide</code>, <code>overUnder</code>, or <code>multiviewHEVC</code>.</li>
+        <li><strong>field</strong> is the projection: <code>equirect360</code>, <code>equirect180</code>, or Apple's parametric <code>appleImmersive</code> with a degrees value. A bare string form is always accepted, and unknown values degrade to <code>equirect360</code> rather than failing the whole document.</li>
+      </ul>
+
+      <h2 id="steps">Steps and gates</h2>
+      <p>A step is a timed beat:</p>
+      <pre>{
+  "id": "step_2", "name": "The lantern", "duration": 10.0,
+  "gate": { "type": "tap", "timeout": 30, "prompt": "Tap the lantern" },
+  "actions": [ … ],
+  "scheduledActions": [ { "at": 2.0, "action": { … } } ]
+}</pre>
+      <ul>
+        <li><strong>duration</strong> is in seconds; when it elapses (and any gate has resolved) the step advances.</li>
+        <li><strong>actions</strong> fire at the step's start; <strong>scheduledActions</strong> fire at second offsets within it.</li>
+        <li><strong>gate</strong> (optional) holds the step until the audience interacts: <code>tap</code>, <code>gaze</code>, <code>approach</code>, or <code>grab</code>, with an optional <code>timeout</code> in seconds and an optional on-screen <code>prompt</code>. Unknown gate types decode as <code>tap</code>.</li>
+      </ul>
+
+      <h2 id="actions">The action catalog</h2>
+      <p>
+        Actions are externally tagged: every action object carries a <code>"kind"</code>
+        plus a case-specific payload, either inline keys or a payload object
+        (<code>"reveal"</code>, <code>"move"</code>, <code>"video"</code>,
+        <code>"audio"</code>, <code>"config"</code>, and so on):
+      </p>
+      <pre>{ "kind": "revealEntity", "reveal": { "entity": "lantern", "fadeIn": 1.5 } }
+{ "kind": "stopAudio", "channel": "narration" }</pre>
+      <div class="table-scroll"><table>
+        <tr><th>Group</th><th>Kinds</th></tr>
+        <tr><td>Entity</td><td><code>showEntity</code> · <code>hideEntity</code> · <code>revealEntity</code> · <code>moveEntity</code> · <code>scaleEntity</code> · <code>fadeEntity</code> · <code>persistEntity</code> · <code>unpersistEntity</code> · <code>animateMotion</code></td></tr>
+        <tr><td>Attachments</td><td><code>showAttachment</code> · <code>hideAttachment</code> · <code>fadeAttachment</code> · <code>setAttachmentView</code> · <code>positionAttachment</code></td></tr>
+        <tr><td>Audio</td><td><code>playAudio</code> · <code>stopAudio</code> · <code>fadeAudio</code> · <code>onAudioComplete</code> (nests follow-up actions)</td></tr>
+        <tr><td>Audio mix</td><td><code>setMasterVolume</code> · <code>setCategoryVolume</code> · <code>setBusVolume</code> · <code>setBusEffect</code> · <code>removeBusEffect</code></td></tr>
+        <tr><td>Audio zones</td><td><code>addAudioZone</code> · <code>removeAudioZone</code> · <code>removeAllAudioZones</code></td></tr>
+        <tr><td>Video</td><td><code>playVideo</code> · <code>prepareVideo</code> · <code>stopVideo</code></td></tr>
+        <tr><td>Effects</td><td><code>showPulseRing</code> · <code>hidePulseRing</code> · <code>startSparkBurst</code> · <code>stopSparkBurst</code></td></tr>
+        <tr><td>Gestures</td><td><code>enableGesture</code> · <code>disableGesture</code></td></tr>
+        <tr><td>System</td><td><code>setUpperLimbVisibility</code> · <code>setKeyboardPassthrough</code></td></tr>
+        <tr><td>Escape hatch</td><td><code>custom</code>: an opaque id plus a free-form JSON parameter blob, handled by app-registered factories.</td></tr>
+      </table></div>
+      <p>
+        Field-level payload documentation lives with the types in
+        <a href="https://github.com/mike-bundy/ChapterScript">the package source</a>, and
+        the <code>representative.json</code> fixture exercises 30+ kinds as real JSON.
+      </p>
+
+      <h3>Video payloads</h3>
+      <ul>
+        <li><strong>Presentation</strong>: video binds to a SwiftUI <code>attachment</code>, an in-scene <code>entity</code> panel with width and height, or an <code>immersive</code> skybox sphere with radius and field.</li>
+        <li><strong>Trims are metadata</strong>: <code>sourceIn</code> / <code>sourceOut</code> window the master file without re-encoding it; omitting them plays the whole file. A crop rect is also available.</li>
+      </ul>
+
+      <h2 id="animation">Animation tracks</h2>
+      <p>
+        Keyframe animation lives on the sequence: one track per animated entity, up to ten
+        scalar channels (<code>tx ty tz</code>, <code>rx ry rz</code>, <code>sx sy sz</code>,
+        <code>opacity</code>). Keys sit at absolute seconds from sequence start:
+      </p>
+      <pre>{
+  "entity": "lantern",
+  "rotateOrder": "xyz",
+  "channels": {
+    "ty": [
+      { "t": 0.0, "v": 1.0, "interp": "bezier",
+        "inTangent":  { "dt": -0.4, "dv": 0.0 },
+        "outTangent": { "dt":  0.4, "dv": 0.0 } },
+      { "t": 4.0, "v": 1.6, "interp": "bezier" }
+    ]
+  }
+}</pre>
+      <ul>
+        <li>Tangent handles are <code>(dt, dv)</code> offsets; keys without explicit tangents get smooth automatic ones, and linear and stepped modes are available.</li>
+        <li>Rotations are <strong>continuous Euler degrees</strong> with an explicit rotate order: a two-turn wind-up is stored as 720°, so nothing snaps to a shortest path.</li>
+        <li>The package ships the canonical curve evaluator; players and editors sample the same math, so playback matches authoring exactly.</li>
+      </ul>
+
+      <h2 id="manifest">The asset manifest</h2>
+      <pre>{ "entries": [
+  { "id": "intro.mp4", "relativePath": "intro.mp4",
+    "byteSize": 48211930, "sha256": "9f31ab…" }
+] }</pre>
+      <p>
+        Hashes let players cache aggressively and never show a stale frame; byte sizes
+        let them budget transfers. Probed media metadata (duration, dimensions) rides
+        along where it applies.
+      </p>
+
+      <h2 id="versioning">Versioning, migration, forward compat</h2>
+      <ul>
+        <li><strong>Deterministic saves</strong>: pretty-printed JSON with sorted keys and unescaped slashes, identical bytes for identical documents. Diffs are reviewable and non-colliding edits merge cleanly.</li>
+        <li><strong>Migration</strong>: JSON-to-JSON migrators run before typed decoding, so older documents stay loadable. The v2 → v3 migration renamed <code>segments</code> → <code>sequences</code> (and <code>defaultSegmentId</code> → <code>defaultSequenceId</code>, <code>nextSegmentId</code> → <code>nextSequenceId</code>) without touching ids, timings, or keys.</li>
+        <li><strong>Tolerant decoding</strong>: unknown action kinds parse into an <code>unknown</code> case that editors preserve and re-emit unchanged, and players log and skip. Unknown presentation, field, and gate values degrade to safe defaults instead of failing the document.</li>
+      </ul>
+      <div class="doc-callout"><p>
+        Pre-1.0: the schema may still change. The first stable release will lock the
+        wire format and start the strict back-compat regime.
+      </p></div>
+
+      <div class="doc-next">
+        <a class="spec-link" href="https://github.com/mike-bundy/ChapterScript/tree/main/Tests/ChapterScriptTests/Fixtures">
+          <h3>Example documents <span>→</span></h3>
+          <p>Working fixtures, from the smallest valid document to one exercising 30+ action kinds.</p>
+        </a>
+        <a class="spec-link" href="/player.html">
+          <h3>Play it back <span>→</span></h3>
+          <p>Embed ChapterPlayer, the open source visionOS runtime, in your own app.</p>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <p>An <a href="https://implement.studio">Implement</a> project · © 2026 Implement</p>
+      <div class="footer-links">
+        <a href="https://github.com/mike-bundy/ChapterScript">GitHub</a>
+        <a href="mailto:hello@chapterscript.com">hello@chapterscript.com</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

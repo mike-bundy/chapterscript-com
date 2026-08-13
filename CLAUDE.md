@@ -46,8 +46,11 @@ mint (`<span class="accent">`). There is no logo image.
   "Vision Studio", "SharedVisions", "Afterburn", "MaestroKit", "chapterengine".
 - Do not invent APIs, license names, version numbers, or benchmark claims.
 - GitHub links point at https://github.com/mike-bundy/ChapterScript and
-  .../ChapterPlayer (live repos). Each spec/repo link carries an HTML
-  comment: `placeholder repo URL: update when the org/repos go live`.
+  .../ChapterPlayer (live repos, exact casing).
+- Reference content on /format.html and /player.html was verified against the
+  actual packages in ~/code/ChapterScript and ~/code/ChapterPlayer (2026-08-12).
+  When the format or runtime changes, re-verify against the source before
+  editing claims; don't extend the reference from memory.
 
 ## Copy style
 
@@ -73,14 +76,14 @@ cd ~/Herd/chapterscript
 
 # no forbidden strings (must print nothing)
 grep -rni "chapter vision\|chapter studio\|vision studio\|sharedvisions\|afterburn\|maestrokit\|chapterengine" \
-  index.html 404.html README.md assets/css/*.css assets/js/*.js
+  index.html format.html player.html 404.html README.md assets/css/*.css assets/js/*.js
 
 # exact casing of the two project names (must print nothing)
 grep -rn "Chapterscript\|chapterScript\|ChapterScript\b" index.html | grep -v "ChapterScript" ; \
 grep -rn "Chapterplayer\|chapterPlayer" index.html 404.html README.md
 
 # every internal href resolves
-grep -rhoE 'href="/[^"#]*"' index.html 404.html | sed 's/href="//;s/"//' | sort -u | \
+grep -rhoE 'href="/[^"#]*"' index.html format.html player.html 404.html | sed 's/href="//;s/"//' | sort -u | \
   while read u; do [ "$u" = "/" ] || [ -f ".$u" ] || echo "MISSING: $u"; done
 
 # every anchor href has a matching id

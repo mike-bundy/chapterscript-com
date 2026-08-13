@@ -10,6 +10,8 @@ external dependency is Google Fonts (Space Grotesk, Inter, JetBrains Mono).
 
 ```
 index.html          Single-page site (anchors: #format #model #guarantees #player #spec #repos)
+format.html         Full format reference (bundle, schema, action catalog, versioning)
+player.html         ChapterPlayer embedding guide (install, architecture, content loading)
 404.html            Themed not-found page, links home
 assets/css/site.css All design tokens and styles
 assets/js/site.js   Progressive enhancement: reveal-on-scroll, nav state, hero typing
