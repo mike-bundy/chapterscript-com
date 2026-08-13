@@ -38,15 +38,15 @@ mint (`<span class="accent">`). There is no logo image.
 ## Naming rules (strict)
 
 - **ChapterScript** and **ChapterPlayer** are exactly-cased, always.
-- The commercial products are **Maestro** (suite), **Maestro Studio** (Mac
-  app), **Maestro Vision** (Vision Pro app). Mention Maestro only where the
-  page already does: the hero eyebrow, the ChapterPlayer section ("the same
-  runtime that powers playback in Maestro"), the spec pointer, the footer.
+- **This site does not mention Maestro** (removed 2026-08-12 by request): no
+  "Maestro", no maestrostud.io links. The site stands alone as the open source
+  home; the studio connection is the "An Implement project" eyebrow/footer
+  linking implement.studio. Don't reintroduce commercial-product mentions.
 - NEVER use these strings anywhere: "Chapter Vision", "Chapter Studio",
   "Vision Studio", "SharedVisions", "Afterburn", "MaestroKit", "chapterengine".
 - Do not invent APIs, license names, version numbers, or benchmark claims.
-- GitHub links point at https://github.com/mike-bundy/chapterscript and
-  .../chapterplayer; the repos are not public yet. Each link carries an HTML
+- GitHub links point at https://github.com/mike-bundy/ChapterScript and
+  .../ChapterPlayer (live repos). Each spec/repo link carries an HTML
   comment: `placeholder repo URL: update when the org/repos go live`.
 
 ## Copy style

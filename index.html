@@ -35,7 +35,7 @@
       <div class="glow glow-mint" aria-hidden="true"></div>
       <div class="glow glow-blue" aria-hidden="true"></div>
       <div class="wrap">
-        <p class="eyebrow">Open source · From the team behind Maestro</p>
+        <p class="eyebrow">Open source · An Implement project</p>
         <h1>Spatial stories, as a readable file.</h1>
         <p class="hero-sub"><strong>ChapterScript</strong> is an open JSON format for immersive, interactive spatial experiences. <strong>ChapterPlayer</strong> is the Swift runtime that plays them on Apple Vision Pro.</p>
         <div class="hero-ctas">
@@ -174,7 +174,7 @@
         <div class="player-grid">
           <div class="section-head reveal" style="margin-bottom:0">
             <h2>ChapterPlayer</h2>
-            <p>The open source visionOS runtime for <code>.chapterscript</code> bundles. It is the same runtime that powers playback in Maestro, the commercial authoring suite, published as a Swift package you can embed in your own visionOS app.</p>
+            <p>The open source visionOS runtime for <code>.chapterscript</code> bundles, published as a Swift package you can embed in your own visionOS app.</p>
           </div>
           <div class="reveal">
             <ul class="cap-list">
@@ -182,10 +182,11 @@
               <li><span>Drives the <strong>step loop, gates and action executors</strong></span></li>
               <li><span><strong>Immersive and panel video</strong> playback</span></li>
               <li><span><strong>Spatial audio</strong></span></li>
+              <li><span><strong>USDZ assets</strong> as placeable entities and full backdrop scenes</span></li>
               <li><span><strong>Bézier motion evaluation</strong> identical to the authoring tools</span></li>
               <li><span><strong>Embeddable</strong> in your own visionOS app</span></li>
             </ul>
-            <p class="player-note">Authoring happens in <a href="https://maestrostud.io">Maestro</a>; playback is open. Anything Maestro can publish, ChapterPlayer can play.</p>
+            <p class="player-note">The format is tool-agnostic: any document that decodes as valid ChapterScript, ChapterPlayer can play.</p>
           </div>
         </div>
       </div>
@@ -195,16 +196,16 @@
       <div class="wrap">
         <div class="section-head reveal">
           <h2>The full reference</h2>
-          <p>The complete format reference lives in the Maestro Handbook, field by field.</p>
+          <p>The complete reference ships with the packages, field by field.</p>
         </div>
         <div class="spec-links">
-          <a class="spec-link reveal" href="https://maestrostud.io/docs/chapterscript-format.html">
+          <a class="spec-link reveal" href="https://github.com/mike-bundy/ChapterScript#readme">
             <h3>Format reference <span>→</span></h3>
             <p>The <code>chapter.json</code> schema: sequences, steps, gates, actions, tracks and the asset manifest.</p>
           </a>
-          <a class="spec-link reveal" href="https://maestrostud.io/docs/live-sync.html">
-            <h3>Live sync protocol <span>→</span></h3>
-            <p>How authoring tools stream document changes and assets to a running player over HTTP.</p>
+          <a class="spec-link reveal" href="https://github.com/mike-bundy/ChapterScript/tree/main/Tests/ChapterScriptTests/Fixtures">
+            <h3>Example documents <span>→</span></h3>
+            <p>Working fixtures, from the smallest valid document to one exercising 30+ action kinds.</p>
           </a>
         </div>
       </div>
@@ -244,7 +245,7 @@
     <div class="wrap footer-inner">
       <p>An <a href="https://implement.studio">Implement</a> project · © 2026 Implement</p>
       <div class="footer-links">
-        <a href="https://maestrostud.io">Maestro, the authoring suite</a>
+        <a href="https://github.com/mike-bundy/ChapterScript">GitHub</a>
         <a href="mailto:hello@chapterscript.com">hello@chapterscript.com</a>
       </div>
     </div>
