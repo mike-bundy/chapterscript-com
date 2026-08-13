@@ -32,8 +32,9 @@ Dark slate terminal aesthetic:
   JetBrains Mono (used prominently: eyebrows, labels, nav wordmark, buttons)
 
 Use the CSS variables, not literal hex, for anything new. The brand is
-type-only: the wordmark is "chapterscript" in JetBrains Mono with ".com" in
-mint (`<span class="accent">`). There is no logo image.
+type-only: the wordmark is "chapterscript" in JetBrains Mono with the
+"script" half in mint (`chapter<span class="accent">script</span>`). There is
+no logo image.
 
 ## Naming rules (strict)
 
