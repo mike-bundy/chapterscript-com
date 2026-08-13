@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ChapterScript — an open format for spatial stories</title>
+  <meta name="description" content="ChapterScript is an open JSON format for immersive, interactive spatial experiences. ChapterPlayer is the open source Swift runtime that plays them on Apple Vision Pro.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/site.css">
+</head>
+<body>
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="wordmark" href="/">chapterscript<span class="accent">.com</span></a>
+      <nav class="nav-links" aria-label="Site">
+        <a href="#format">Format</a>
+        <a href="#player">Player</a>
+        <a href="#spec">Spec</a>
+        <!-- placeholder repo URL: update when the org/repos go live -->
+        <a href="https://github.com/implement-studio/chapterscript">GitHub</a>
+        <a class="btn btn-ghost" href="https://github.com/implement-studio/chapterscript">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+          GitHub
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="glow glow-mint" aria-hidden="true"></div>
+      <div class="glow glow-blue" aria-hidden="true"></div>
+      <div class="wrap">
+        <p class="eyebrow">Open source · From the team behind Maestro</p>
+        <h1>Spatial stories, as a readable file.</h1>
+        <p class="hero-sub"><strong>ChapterScript</strong> is an open JSON format for immersive, interactive spatial experiences. <strong>ChapterPlayer</strong> is the Swift runtime that plays them on Apple Vision Pro.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="#format">Read the format</a>
+          <a class="btn" href="#player">Get the player</a>
+        </div>
+        <p class="hero-term" aria-hidden="true"><span class="prompt">$</span> <span class="typed">open the-lighthouse.chapterscript</span><span class="cursor"></span></p>
+      </div>
+    </section>
+
+    <section class="section" id="format">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <h2>One bundle. Everything the story needs.</h2>
+          <p>A <code>.chapterscript</code> document is a directory bundle: a single <code>chapter.json</code> next to an <code>assets/</code> folder. Every asset is manifested with its byte size and SHA-256, so a player knows exactly what it has and exactly what changed.</p>
+        </div>
+
+        <div class="bundle-tree reveal" role="img" aria-label="Bundle layout: a .chapterscript directory containing chapter.json and an assets folder whose files are manifested with byte size and SHA-256">
+<pre><span class="d">the-lighthouse.chapterscript/</span>
+├── <span class="f">chapter.json</span>          <span class="m">the whole story, one file</span>
+└── <span class="d">assets/</span>
+    ├── <span class="f">shore_360.mov</span>     <span class="m">manifested: 412,384,221 bytes · sha256 9f2c…</span>
+    └── <span class="f">lantern.usdz</span>      <span class="m">manifested: 1,204,552 bytes · sha256 b81a…</span></pre>
+        </div>
+
+        <div class="code-panel reveal">
+          <div class="code-bar">
+            <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+            <span class="code-title">chapter.json</span>
+          </div>
+<pre>{
+  <span class="k">"formatVersion"</span>: <span class="n">2</span>,                    <span class="c">// migrated forward on open</span>
+  <span class="k">"experienceID"</span>: <span class="s">"the-lighthouse"</span>,
+  <span class="k">"displayName"</span>: <span class="s">"The Lighthouse"</span>,
+  <span class="k">"defaultSegmentId"</span>: <span class="s">"arrival"</span>,         <span class="c">// where playback begins</span>
+  <span class="k">"segments"</span>: [
+    {
+      <span class="k">"id"</span>: <span class="s">"arrival"</span>,
+      <span class="k">"presentation"</span>: <span class="s">"immersive"</span>,       <span class="c">// full surround</span>
+      <span class="k">"immersiveBackdrop"</span>: {
+        <span class="k">"video"</span>: <span class="s">"shore_360.mov"</span>,        <span class="c">// from assets/, by manifest</span>
+        <span class="k">"field"</span>: <span class="s">"deg360"</span>
+      },
+      <span class="k">"steps"</span>: [
+        {
+          <span class="k">"duration"</span>: <span class="n">8</span>,                  <span class="c">// seconds, then advance…</span>
+          <span class="k">"gate"</span>: { <span class="k">"type"</span>: <span class="s">"tap"</span> },      <span class="c">// …but hold for a tap first</span>
+          <span class="k">"actions"</span>: [
+            { <span class="k">"revealEntity"</span>: { <span class="k">"name"</span>: <span class="s">"lantern"</span>, <span class="k">"fadeIn"</span>: <span class="n">1.5</span> } }
+          ]
+        }
+      ],
+      <span class="k">"animationTracks"</span>: [
+        {
+          <span class="k">"target"</span>: <span class="s">"lantern"</span>,
+          <span class="k">"keyPath"</span>: <span class="s">"position.y"</span>,
+          <span class="k">"keys"</span>: [                       <span class="c">// bézier-eased keyframes</span>
+            { <span class="k">"time"</span>: <span class="n">0</span>, <span class="k">"value"</span>: <span class="n">0.0</span>, <span class="k">"outTangent"</span>: [<span class="n">0.3</span>, <span class="n">0.0</span>] },
+            { <span class="k">"time"</span>: <span class="n">4</span>, <span class="k">"value"</span>: <span class="n">1.2</span>, <span class="k">"inTangent"</span>: [<span class="n">0.7</span>, <span class="n">1.0</span>] }
+          ]
+        }
+      ]
+    }
+  ]
+}</pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="model">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <h2>The document model</h2>
+          <p>Four nouns, one hierarchy. If you can read the JSON above, you already know all of them.</p>
+        </div>
+        <div class="concepts">
+          <div class="concept reveal">
+            <h3>chapter</h3>
+            <p>The whole document. One <code>chapter.json</code>, one story, one bundle.</p>
+          </div>
+          <div class="concept reveal">
+            <h3>segments</h3>
+            <p>Timed scenes. Each has a presentation mode and an optional backdrop.</p>
+          </div>
+          <div class="concept reveal">
+            <h3>steps</h3>
+            <p>Timed beats. Optionally held by gates: tap, gaze, approach, grab, with an optional timeout and prompt.</p>
+          </div>
+          <div class="concept reveal">
+            <h3>actions</h3>
+            <p>Reveals, moves, video, audio, particles and more, fired as a step plays.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="guarantees">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <h2>Format guarantees</h2>
+          <p>The format is designed to be operated on by tools, tracked by version control, and trusted by players.</p>
+        </div>
+        <div class="features">
+          <div class="feature reveal">
+            <span class="feature-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3v12M18 9v12M6 15a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM18 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM18 9c0 3-3 4-6 4"/></svg></span>
+            <h3>Clean diffs</h3>
+            <p>Saves are deterministic: sorted keys, pretty-printed. The same document always serializes the same way, so version control shows you what actually changed.</p>
+          </div>
+          <div class="feature reveal">
+            <span class="feature-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4Z"/><path d="M9 12l2 2 4-4"/></svg></span>
+            <h3>SHA-256 asset manifest</h3>
+            <p>Every asset ships with its byte size and content hash. Players cache aggressively and never show a stale frame.</p>
+          </div>
+          <div class="feature reveal">
+            <span class="feature-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h13M13 6l6 6-6 6"/></svg></span>
+            <h3>Forward-compatible</h3>
+            <p>Older documents migrate on open. Decoding is tolerant: fields a reader does not recognize are carried, not crashed on.</p>
+          </div>
+          <div class="feature reveal">
+            <span class="feature-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6l-5 6 5 6M16 6l5 6-5 6"/></svg></span>
+            <h3>Readable and generatable</h3>
+            <p>It is JSON you can actually read. Write chapters from scripts, pipelines, or by hand.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="player">
+      <div class="wrap">
+        <div class="player-grid">
+          <div class="section-head reveal" style="margin-bottom:0">
+            <h2>ChapterPlayer</h2>
+            <p>The open source visionOS runtime for <code>.chapterscript</code> bundles. It is the same runtime that powers playback in Maestro, the commercial authoring suite, published as a Swift package you can embed in your own visionOS app.</p>
+          </div>
+          <div class="reveal">
+            <ul class="cap-list">
+              <li><span>Plays <strong><code>.chapterscript</code> bundles</strong> end to end</span></li>
+              <li><span>Drives the <strong>step loop, gates and action executors</strong></span></li>
+              <li><span><strong>Immersive and panel video</strong> playback</span></li>
+              <li><span><strong>Spatial audio</strong></span></li>
+              <li><span><strong>Bézier motion evaluation</strong> identical to the authoring tools</span></li>
+              <li><span><strong>Embeddable</strong> in your own visionOS app</span></li>
+            </ul>
+            <p class="player-note">Authoring happens in <a href="https://maestrostud.io">Maestro</a>; playback is open. Anything Maestro can publish, ChapterPlayer can play.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="spec">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <h2>The full reference</h2>
+          <p>The complete format reference lives in the Maestro Handbook, field by field.</p>
+        </div>
+        <div class="spec-links">
+          <a class="spec-link reveal" href="https://maestrostud.io/docs/chapterscript-format.html">
+            <h3>Format reference <span>→</span></h3>
+            <p>The <code>chapter.json</code> schema: segments, steps, gates, actions, tracks and the asset manifest.</p>
+          </a>
+          <a class="spec-link reveal" href="https://maestrostud.io/docs/live-sync.html">
+            <h3>Live sync protocol <span>→</span></h3>
+            <p>How authoring tools stream document changes and assets to a running player over HTTP.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="repos">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <h2>Two repositories</h2>
+          <p>The spec and the runtime, developed in the open.</p>
+        </div>
+        <div class="repos">
+          <div class="repo reveal">
+            <h3><span class="org">implement-studio/</span>chapterscript</h3>
+            <p>The format specification and JSON schema, plus example bundles. Start here if you are writing a tool that reads or emits ChapterScript.</p>
+            <!-- placeholder repo URL: update when the org/repos go live -->
+            <a class="btn" href="https://github.com/implement-studio/chapterscript">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+              View on GitHub
+            </a>
+          </div>
+          <div class="repo reveal">
+            <h3><span class="org">implement-studio/</span>chapterplayer</h3>
+            <p>The Swift package: the visionOS runtime that plays bundles, with the step loop, gates, executors, video, audio and motion evaluation.</p>
+            <!-- placeholder repo URL: update when the org/repos go live -->
+            <a class="btn" href="https://github.com/implement-studio/chapterplayer">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+              View on GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <p>An <a href="https://implement.studio">Implement</a> project · © 2026 Implement</p>
+      <div class="footer-links">
+        <a href="https://maestrostud.io">Maestro, the authoring suite</a>
+        <a href="mailto:hello@chapterscript.com">hello@chapterscript.com</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/site.js"></script>
+</body>
+</html>
