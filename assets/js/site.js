@@ -35,19 +35,4 @@
       io.observe(el);
     });
   }
-
-  /* Hero terminal line: typed character by character when motion is allowed.
-     The full text is in the markup, so no-JS and reduced-motion visitors
-     simply see it complete. */
-  var typed = document.querySelector(".hero-term .typed");
-  if (typed && !reduced) {
-    var full = typed.textContent;
-    typed.textContent = "";
-    var i = 0;
-    var tick = function () {
-      typed.textContent = full.slice(0, ++i);
-      if (i < full.length) setTimeout(tick, 34);
-    };
-    setTimeout(tick, 500);
-  }
 })();

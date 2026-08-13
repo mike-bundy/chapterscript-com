@@ -38,10 +38,11 @@ mint (`<span class="accent">`). There is no logo image.
 ## Naming rules (strict)
 
 - **ChapterScript** and **ChapterPlayer** are exactly-cased, always.
-- **This site does not mention Maestro** (removed 2026-08-12 by request): no
-  "Maestro", no maestrostud.io links. The site stands alone as the open source
-  home; the studio connection is the "An Implement project" eyebrow/footer
-  linking implement.studio. Don't reintroduce commercial-product mentions.
+- **Maestro appears in exactly one place**: the homepage footer link "Maestro,
+  the authoring suite" → maestrostud.io (restored 2026-08-12 by request). No
+  other Maestro mentions or maestrostud.io links anywhere; page copy stands
+  alone as the open source home, with the footer "An Implement project"
+  linking implement.studio.
 - NEVER use these strings anywhere: "Chapter Vision", "Chapter Studio",
   "Vision Studio", "SharedVisions", "Afterburn", "MaestroKit", "chapterengine".
 - Do not invent APIs, license names, version numbers, or benchmark claims.
@@ -64,8 +65,8 @@ stories".
 - The page must look right with JS disabled: `.reveal` content is visible by
   default; JS adds `html.reveal-enabled` (only when motion is allowed) before
   anything is hidden. Keep that true for anything new.
-- `prefers-reduced-motion` is honored everywhere: no reveals, no typing
-  effect, no cursor blink, no smooth scroll. Keep it that way.
+- `prefers-reduced-motion` is honored everywhere: no reveals, no smooth
+  scroll. Keep it that way.
 - Wide code blocks scroll horizontally inside their panel (`overflow-x: auto`);
   the page body never scrolls sideways.
 
